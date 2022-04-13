@@ -20,6 +20,14 @@ window.onload = function (){
         {x: 40, y: 200},
     ]
 
+    let highscores = [
+        {name: "Matti Snakelainen", score: 30},
+        {name: "Seppo Serpiente", score: 150},
+        {name: "Kalle Kärmes", score: 310},
+        {name: "Pentti Kärmelin", score: 480},
+        {name: "Maija Mato", score: 260}
+    ]
+
     // True if changing direction
     let changing_direction = false;
     //horizontal velocity
@@ -207,8 +215,14 @@ window.onload = function (){
         }
     }
 
+    //highscoret mapattuina vikalle sivulle
+    //tulisi myös järjestää suuruusjärjestykseen
+    const highscoresList = () => {
+        highscores.map(x => context.fillText(x.name + ' ' + x.score + ' points'))
+    }
+
     //Starting page of the game
-    function start_game() {
+    function mainScreen() {
         context.font = '25px nokiafc22'
         context.fillStyle = 'black'
         context.fillText("Click here to start", 200, 220)
@@ -239,43 +253,24 @@ window.onload = function (){
         height:50
     }
 
-    const main = () => {
-
-        //if (game_end()) return;
-        game_end()
-        if (runGame == false) return
-
-        changing_direction = false;
-        setTimeout(function onTick(){
-        clearCanvas()
-        drawFood()
-        move_snake()
-        drawSnake()
-
-        context.font = '25px nokiafc22'
-        context.fillStyle = 'black'
-        context.fillText(points, 500, 30)
-
-        //call main again
-        main()
-        }, 150)
-
-        
-    }
     
+    //UI's main/line-button click to start the game
+    document.getElementById("line-button").onclick = function() {ButtonStartGame()};
 
-    document.addEventListener("keydown", change_direction);
+    const ButtonStartGame = () => {
+        if (!runGame){
+            StartGame()
+        }
+    }
 
-    canvas.addEventListener('click', function(evt){
-        var mousePos = getMousePos(canvas, evt)
-
-        if (!runGame && isInside(mousePos,rect)) {
-            clearCanvas()
+    function StartGame() {
+        console.log("hellow startGame")
+        clearCanvas()
             //Game is running = true
             points = 0
             runGame = true
-            console.log(mousePos)
-            console.log(runGame)
+            //console.log(mousePos)
+            //console.log(runGame)
             snake = [
                 {x: 200, y: 200},
                 {x: 160, y: 200},
@@ -292,10 +287,53 @@ window.onload = function (){
                 console.log('the game runs')
                 main()
             }
+    }
+
+    const main = () => {
+
+        //if (game_end()) return;
+        game_end()
+        if (runGame == false) return
+
+        changing_direction = false;
+        setTimeout(function onTick(){
+        clearCanvas()
+        drawFood()
+        move_snake()
+        drawSnake()
+
+        // points over the canvas
+        document.getElementById("points").innerHTML = points;
+
+        //call main again
+        main()
+        }, 150)
+
+        
+    }
+    
+
+    //movements of the snake
+    document.addEventListener("keydown", change_direction);
+    
+    //starting the app with space
+    document.addEventListener('keypress', e => {
+        if(e.code === 'Space'){
+            ButtonStartGame()
+        }
+    })
+
+
+    //starting game by mouseclick
+    canvas.addEventListener('click', function(evt){
+        var mousePos = getMousePos(canvas, evt)
+
+        if (!runGame && isInside(mousePos,rect)) {
+            StartGame()
         }
     }, false)
 
-    start_game()
+    mainScreen()
     console.log(runGame)
     if (runGame) {
         main()
@@ -303,29 +341,36 @@ window.onload = function (){
     //main()
     
 
-        /* PUUTTUVAT TOIMINNOT: 
-        1. Start game Spacesta ja nokian päänapista              
-        4. Pisteet canvaksen yläpuolelle vasemmalle
-        6. Näppäimistö (3310) ja toiminnallisuudet
+        /* PUUTTUVAT TOIMINNOT:             
         8. benchmarkkaus originaaliin 3310 snakeen
         9. korjaukset ylemmän mukaan
         10. Muokkaa osat funktioiksi 
             - (const drawSnake =()=>)
             - const newFood = () =>
-        11. Pause button (space?)
+        11. Pause button (space?) / tai ehkä ei
         13. ennätyslista
-        - toimiminen FPS:nä window.requestAnimationFrame(main) 
-        14. favicon
-        15. media screen size puhelin, tablet ja tietokone
+        13. Ennätyslistaan lisääminen
+        14. toimiminen FPS:nä window.requestAnimationFrame(main) 
+        15. poista var ja vaihda let/const
+        16. jaa .js ohjelma useampiin alatiedostoihin
+        
 
         Done:
         1. Liikkuminen "Pixeleittäin" (eikä seinän sisällä)
-            - madon koon mukaan (optimikoko??)
-        2. Madon kasvattaminen
-        3. Matoon törmääminen
-        5. Nokia 3310 Design
-        12. game-endiin restartti
-                        
+            - madon koon mukaan (optimikoko??) (25.3.2022)
+        2. Madon kasvattaminen (25.3)
+        3. Matoon törmääminen (25.3)
+        4. Nokia 3310 Design (29.3.2022)
+        5. Näppäimistö (3310) ja toiminnallisuudet (29.3.2022)
+        6. game-endiin restartti (28.3.2022)
+        8. favicon (29.3.2022)
+        8. layout grids (29.3.2022)
+        7. Start game Spacesta ja nokian päänapista  (30.3.2022)
+        9. githubbiin ja gitpages (30.3.2022)
+        4. Pisteet canvaksen yläpuolelle vasemmalle (30.3.2022)
+        15. media query screen size puhelin, tablet ja tietokone (30.3.2022)
+        16. hr-viiva pisteiden alle (2.4.2022)
+            - position relative bottom -4px numeron siirtoon
         */
     
 }
