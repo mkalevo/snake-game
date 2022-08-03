@@ -1,7 +1,9 @@
+import { drawFood } from "./food.js"
+
 window.onload = function (){
     let canvas = document.getElementById("canvas");
     let context = canvas.getContext("2d")
-
+    
     //canvas size 18*11
     // 680 * 440 and snake 40 pixels
     let points = 0
@@ -44,7 +46,7 @@ window.onload = function (){
     function random_food(min, max) {
         return Math.round((Math.random() * (max-min) + min) /40) *40
     }
-
+    
     const gen_food = () => {
         food_x = random_food(0, canvas.width - 40)
         food_y = random_food(0, canvas.height - 40)
@@ -52,19 +54,6 @@ window.onload = function (){
             const has_eaten = part.x == food_x && part.y == food_y;
             if (has_eaten) gen_food();
         })
-    }
-
-    const drawFood = () => {
-        context.beginPath()
-        context.arc(food_x + 20, food_y + 20, 20, 0, Math.PI * 2)
-        //context.rect(food_x, food_y, 40, 40)
-        context.fillStyle = "rgb(20,20,20)"
-        context.fill()
-/*
-        context.fillStyle = 'lightgreen'
-        context.strokestyle = 'darkgreen'
-        context.fillRect(food_x, food_y, 10, 10)
-        context.strokeRect(food_x, food_y, 10, 10) */
     }
 
     
@@ -178,7 +167,6 @@ window.onload = function (){
         }
     }
 
-
     //function to use wait()
     function wait(ms){
         let start = new Date().getTime();
@@ -206,6 +194,9 @@ window.onload = function (){
                 context.fillText(points + ' POINTS', 230, 150)
                 context.fillText("Play again", 230, 220)
 
+                addToHighscores("Pelaaja1 (Käärmes)", points)
+                highscoresList()
+
                 runGame = false 
                 has_collided = false
 
@@ -218,7 +209,19 @@ window.onload = function (){
     //highscoret mapattuina vikalle sivulle
     //tulisi myös järjestää suuruusjärjestykseen
     const highscoresList = () => {
-        highscores.map(x => context.fillText(x.name + ' ' + x.score + ' points'))
+        let posX = 160
+        let posY = 250
+        context.font = '20px nokiafc22'
+        context.fillStyle = 'black'
+        let ValueSortHighscores = highscores.sort((a,b) => b.score - a.score)
+        ValueSortHighscores = ValueSortHighscores.slice(0, 5)
+        ValueSortHighscores.map(x  => context.fillText(x.name + '      ' + x.score + ' points', posX, posY+=25))
+
+    }
+
+    //Pisteet highscorelistaan
+    const addToHighscores = (name1, score1) => {
+        highscores.push({name: name1, score: score1})
     }
 
     //Starting page of the game
@@ -252,7 +255,6 @@ window.onload = function (){
         width:260,
         height:50
     }
-
     
     //UI's main/line-button click to start the game
     document.getElementById("line-button").onclick = function() {ButtonStartGame()};
@@ -298,7 +300,7 @@ window.onload = function (){
         changing_direction = false;
         setTimeout(function onTick(){
         clearCanvas()
-        drawFood()
+        drawFood(context, food_x, food_y)
         move_snake()
         drawSnake()
 
@@ -308,8 +310,6 @@ window.onload = function (){
         //call main again
         main()
         }, 150)
-
-        
     }
     
 
@@ -322,7 +322,6 @@ window.onload = function (){
             ButtonStartGame()
         }
     })
-
 
     //starting game by mouseclick
     canvas.addEventListener('click', function(evt){
@@ -348,11 +347,25 @@ window.onload = function (){
             - (const drawSnake =()=>)
             - const newFood = () =>
         11. Pause button (space?) / tai ehkä ei
-        13. ennätyslista
-        13. Ennätyslistaan lisääminen
         14. toimiminen FPS:nä window.requestAnimationFrame(main) 
         15. poista var ja vaihda let/const
         16. jaa .js ohjelma useampiin alatiedostoihin
+        19. Ennätyslistaan omalla nimellä
+        2X. funktionaalisten sääntöjen mukaan
+
+
+        24. Lataa WSL2
+        20. Typescriptiksi
+            - typescript compiler (TSC)
+                - tsc watch (devserver) tsc build ()
+            - osaa lukea reactia suoraan
+        2X. prettier CLI? (npm install prettier, asenna vscode plugari)
+        2x. Eslint (airbnb, google?)
+        21. Firebase kautta ennätyslista
+        22. Reactiksi
+
+        23. (REMIX)
+        
         
 
         Done:
@@ -371,6 +384,8 @@ window.onload = function (){
         15. media query screen size puhelin, tablet ja tietokone (30.3.2022)
         16. hr-viiva pisteiden alle (2.4.2022)
             - position relative bottom -4px numeron siirtoon
+        17. Ennätyslistan tulostaminen (2.8.2022)
+        18. Omien pisteiden lisääminen ennätyslistaan ilman nimeä (2.8.2022)
         */
     
 }
