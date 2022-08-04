@@ -10,5 +10,3 @@ export const drawFood = (context, food_x, food_y) => {
     context.fillRect(food_x, food_y, 10, 10)
     context.strokeRect(food_x, food_y, 10, 10) */
 }
-
-
