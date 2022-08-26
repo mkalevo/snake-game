@@ -14,5 +14,4 @@ export const drawSnake = (game) => {
         game.context.strokeRect(snakePart.x, snakePart.y, 40, 40)
     })        
 } 
-        
-
+      

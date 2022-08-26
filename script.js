@@ -1,14 +1,14 @@
-import { drawFood } from "./drawFood.js"
-import { clearCanvas } from "./clearCanvas.js"
-import { moveSnake } from "./moveSnake.js"
-import { randomFood } from "./randomFood.js"
-import { genFood } from "./genFood.js"
-import { drawSnake } from "./drawSnake.js"
+import { drawFood } from "./snakeComponents/drawFood.js"
+import { clearCanvas } from "./snakeComponents/clearCanvas.js"
+import { moveSnake } from "./snakeComponents/moveSnake.js"
+import { randomFood } from "./snakeComponents/randomFood.js"
+import { genFood } from "./snakeComponents/genFood.js"
+import { drawSnake } from "./snakeComponents/drawSnake.js"
 //import { wait } from "./wait.js" //Kutsutaan gameEnd:stä (pian :D)
-import { gameEnd } from "./gameEnd.js"
+import { gameEnd } from "./snakeComponents/gameEnd.js"
 //import {  } from "./moving.js"
-import { mainScreen } from "./mainScreen.js"
-import { change_direction } from "./changeDirection.js"
+import { mainScreen } from "./snakeComponents/mainScreen.js"
+import { change_direction } from "./snakeComponents/changeDirection.js"
 
 /*
     Lista muuttujista ja tyypeistä?
