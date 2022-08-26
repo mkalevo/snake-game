@@ -1,291 +1,112 @@
-import { drawFood } from "./food.js"
+import { drawFood } from "./drawFood.js"
+import { clearCanvas } from "./clearCanvas.js"
+import { moveSnake } from "./moveSnake.js"
+import { randomFood } from "./randomFood.js"
+import { genFood } from "./genFood.js"
+import { drawSnake } from "./drawSnake.js"
+//import { wait } from "./wait.js" //Kutsutaan gameEnd:stä (pian :D)
+import { gameEnd } from "./gameEnd.js"
+//import {  } from "./moving.js"
+import { mainScreen } from "./mainScreen.js"
+import { change_direction } from "./changeDirection.js"
 
+/*
+    Lista muuttujista ja tyypeistä?
+    
+
+
+*/
 window.onload = function (){
-    let canvas = document.getElementById("canvas");
-    let context = canvas.getContext("2d")
+    let canvas_let = document.getElementById("canvas");
+    let context_let = canvas.getContext("2d")
     
     //canvas size 18*11
     // 680 * 440 and snake 40 pixels
-    let points = 0
-    let food_x = random_food(0, canvas.width - 40)
-    let food_y = random_food(0, canvas.height - 40)
-    console.log(canvas.width)
-    console.log(canvas.height)
+    console.log(canvas_let.width)
+    console.log(canvas_let.height)
 
-    var runGame = false;
-
-    let snake = [
-        {x: 200, y: 200},
-        {x: 160, y: 200},
-        {x: 120, y: 200},
-        {x: 80, y: 200},
-        {x: 40, y: 200},
-    ]
-
-    let highscores = [
-        {name: "Matti Snakelainen", score: 30},
-        {name: "Seppo Serpiente", score: 150},
-        {name: "Kalle Kärmes", score: 310},
-        {name: "Pentti Kärmelin", score: 480},
-        {name: "Maija Mato", score: 260}
-    ]
-
-    // True if changing direction
-    let changing_direction = false;
-    //horizontal velocity
-    let dx = 40;
-    // vertical velocity
-    let dy = 0;
-
-    let up = document.getElementById('up')
-    let right = document.getElementById('right')
-    let left = document.getElementById('left')
-    let down = document.getElementById('down')
-    
-
-    function random_food(min, max) {
-        return Math.round((Math.random() * (max-min) + min) /40) *40
-    }
-    
-    const gen_food = () => {
-        food_x = random_food(0, canvas.width - 40)
-        food_y = random_food(0, canvas.height - 40)
-        snake.forEach(function has_snake_eaten_food(part) {
-            const has_eaten = part.x == food_x && part.y == food_y;
-            if (has_eaten) gen_food();
-        })
-    }
-
-    
-    function moveUp() {
-        console.log('move up funktio')
-        change_direction('ArrowUp')
-    }
-    function moveDown() {
-        change_direction('ArrowDown')
-    }
-    function moveRight() {
-        change_direction('ArrowRight')
-    }
-    const moveLeft = () => {
-        change_direction('ArrowLeft')
-    }
-    document.getElementById("moveUp").onclick = function(){moveUp()};
-    document.getElementById("moveDown").onclick = function(){moveDown()};
-    document.getElementById("moveRight").onclick = function(){moveRight()};
-    document.getElementById("moveLeft").onclick = function(){moveLeft()};
-
-    const change_direction = (e) => {
-        if (changing_direction) return
-        console.log(e)
-        var keypressed;
-        changing_direction =true
-        console.log(typeof(e))
-
-        
-        if (typeof e === 'object'){
-            keypressed = e.key
-        }else{
-            keypressed = e
-        }
-        
-        console.log(keypressed)
-        
-        // estää väärään suuntaan ajamisen
-        //hölmö logiikka, olisi ehkä parempi jos boolean
-        // true tai false arvo kääntymiseen
-        if (keypressed === 'ArrowUp' && dy === 40){
-            console.log('ei')
-        } else if (keypressed === 'ArrowDown' && dy === -40){
-            console.log('ei')
-        } else if (keypressed === 'ArrowRight' && dx === -40){
-            console.log('ei')
-        } else if (keypressed === 'ArrowLeft' && dx === 40){
-            console.log('ei')
-        } else {
-            switch (keypressed){ 
-                case 'ArrowRight':    //right
-                    dx = 40
-                    dy = 0
-                    break;
-                case 'ArrowLeft':    //left
-                    dx = -40
-                    dy = 0
-                   break;
-                case 'ArrowDown':    //down
-                   dy = 40
-                   dx = 0
-                   break;
-                case 'ArrowUp':    //up
-                    dy = -40
-                    dx = 0
-                    break;    
-            }
-        }
-    }
-    
-    
-    const clearCanvas = () => {
-        context.clearRect(0, 0, canvas.width, canvas.height)
-    }
-
-    const drawSnakePart = (snakePart) => { 
-        context.fillStyle = 'black'
-        context.strokestyle = 'white'
-        context.fillRect(snakePart.x, snakePart.y, 38, 38)
-        context.strokeRect(snakePart.x, snakePart.y, 40, 40)
-    }
-
-    const drawSnake = () => { snake.forEach(drawSnakePart)}
-
-    // moves the snake to direction, adds new head to array
-    // and removes one element
-    //head VAR koska ei toimi constina kesken if
-    const move_snake = () => {
-        //create new snake's head (to the snake array)
-        if (snake[0].x > canvas.width-40) {
-            var head = {x: 0, y: snake[0].y + dy}
-        } else if (snake[0].x < 0) {
-            var head = {x: canvas.width-40, y: snake[0].y + dy}
-        } else if (snake[0].y > canvas.height-40) {
-            var head = {x: snake[0].x + dx, y: 0}
-        } else if (snake[0].y < 0) {
-            var head = {x: snake[0].x + dx, y: canvas.height-40}
-        }else{
-            var head = {x: snake[0].x + dx, y: snake[0].y + dy}
-        }
-       
-        //add the new head to the beginning of the snake body
-        snake.unshift(head) //unshift inserts new element at the start
-        const has_eaten_food = snake[0].x === food_x  &&
-                            snake[0].y === food_y
-        if (has_eaten_food) {
-            points += 10
-            gen_food()
-        } else {
-            snake.pop() //remove the last element
+    //koko pelin objekti game, joka sisältää
+    //pelin, pelilaudan ja käärmeen muuttujat
+    let game = {
+        canvas: canvas_let,
+        context: context_let,
+        playerName: "Käärme666",
+        isRunning: false,
+        snake : {
+            place:[
+                {x: 200, y: 200},
+                {x: 160, y: 200},
+                {x: 120, y: 200},
+                {x: 80, y: 200},
+                {x: 40, y: 200},
+            ],
+            direction: {x: 40, y: 0},
+            movements: [], // max items 2, jossa sisältö "direction"-objekteja?
+            points: 0,
+            foodPos: {
+                x: 100, //randomFood(0, canvas_let.width - 40), 
+                y: 100 //randomFood(0, canvas_let.height - 40)
+            },
+            changingDirection: false
         }
     }
 
-    //function to use wait()
-    function wait(ms){
-        let start = new Date().getTime();
-        let end = start;
-        while(end < start + ms) {
-          end = new Date().getTime();
-       }
-     }
+    // Moving from UI-keyboard
+    document.getElementById("moveUp").onclick = function(){change_direction("ArrowUp", game)};
+    document.getElementById("moveDown").onclick = function(){change_direction("ArrowDown", game)};
+    document.getElementById("moveRight").onclick = function(){change_direction("ArrowRight", game)};
+    document.getElementById("moveLeft").onclick = function(){change_direction("ArrowLeft", game)};
 
-    //if snake has_collided =>
-    // shows the points and give option to play again
-    // 'play again text/'button' use the same area as the 
-    // starting page
-    const game_end = () => {
-        for (let i = 4; i < snake.length; i++){
-            var has_collided = snake[i].x === snake[0].x &&
-            snake[i].y === snake[0].y
-            if (has_collided){
-                //alert('game ended sry bro paina F5')
+    // UI's main/line-button click to start the game
+    document.getElementById("line-button").onclick = function() {ButtonStartGame()};
 
-                wait(1500)
-                clearCanvas()
-                context.font = '25px nokiafc22'
-                context.fillStyle = 'black'
-                context.fillText(points + ' POINTS', 230, 150)
-                context.fillText("Play again", 230, 220)
-
-                addToHighscores("Pelaaja1 (Käärmes)", points)
-                highscoresList()
-
-                runGame = false 
-                has_collided = false
-
-                return runGame
-                //return true
-            }
-        }
-    }
-
-    //highscoret mapattuina vikalle sivulle
-    //tulisi myös järjestää suuruusjärjestykseen
-    const highscoresList = () => {
-        let posX = 160
-        let posY = 250
-        context.font = '20px nokiafc22'
-        context.fillStyle = 'black'
-        let ValueSortHighscores = highscores.sort((a,b) => b.score - a.score)
-        ValueSortHighscores = ValueSortHighscores.slice(0, 5)
-        ValueSortHighscores.map(x  => context.fillText(x.name + '      ' + x.score + ' points', posX, posY+=25))
-
-    }
-
-    //Pisteet highscorelistaan
-    const addToHighscores = (name1, score1) => {
-        highscores.push({name: name1, score: score1})
-    }
-
-    //Starting page of the game
-    function mainScreen() {
-        context.font = '25px nokiafc22'
-        context.fillStyle = 'black'
-        context.fillText("Click here to start", 200, 220)
-    }
-
-    // used in 'Start-button'
-    //function to get mouse position
+    // Function to get mouse position to click the
+    // screen's "Click here" to start the game
     function getMousePos(canvas, event) {
-        var rect = canvas.getBoundingClientRect()
+        let rect = canvas.getBoundingClientRect()
         return {
             x: event.clientX - rect.left,
             y: event.clientY - rect.top
         }
     }
 
-    //parts of 'Start-button'
-    //function to check wheter a point is inside a rectancle
+    // Function to check wheter a point is inside a rectancle
     function isInside(pos, rect) {
         return pos.x > rect.x && pos.x < rect.x+rect.width &&
                 pos.y < rect.y+rect.height && pos.y > rect.y
     }
 
-    //'Start-button' placement and click-area
-    var rect = {
-        x:180,
-        y:170,
-        width:260,
-        height:50
+    // 'Start-button' placement and click-area
+    const rect = {
+        x:180, y:170, width:260, height:50
     }
-    
-    //UI's main/line-button click to start the game
-    document.getElementById("line-button").onclick = function() {ButtonStartGame()};
 
     const ButtonStartGame = () => {
-        if (!runGame){
+        if (!game.isRunning){
             StartGame()
         }
     }
 
-    function StartGame() {
-        console.log("hellow startGame")
-        clearCanvas()
-            //Game is running = true
-            points = 0
-            runGame = true
-            //console.log(mousePos)
-            //console.log(runGame)
-            snake = [
+    const StartGame = () => {
+        console.log("Hello SnakeWorld")
+        clearCanvas(game.context, game.canvas)
+            game.snake.points = 0
+            game.isRunning = true
+            game.snake.place = [
                 {x: 200, y: 200},
                 {x: 160, y: 200},
                 {x: 120, y: 200},
                 {x: 80, y: 200},
                 {x: 40, y: 200},
             ]
-            changing_direction = false
-            //moving left when starts
-            dx = 40;
-            dy = 0;
-            //starts the game
-            if(runGame){
+            game.snake.changingDirection = false
+            // Moving left when starts
+            game.snake.direction.x = 40;
+            game.snake.direction.y = 0;
+            // Generates food position
+            game = genFood(game)
+            // Starts the game
+            if(game.isRunning){
                 console.log('the game runs')
                 main()
             }
@@ -293,52 +114,54 @@ window.onload = function (){
 
     const main = () => {
 
-        //if (game_end()) return;
-        game_end()
-        if (runGame == false) return
+        // If gameEnd() then return;
+        //game = 
+        gameEnd(game)
 
-        changing_direction = false;
+        if (game.isRunning === false) return
+
+        game.snake.changingDirection = false;
+
         setTimeout(function onTick(){
-        clearCanvas()
-        drawFood(context, food_x, food_y)
-        move_snake()
-        drawSnake()
-
-        // points over the canvas
-        document.getElementById("points").innerHTML = points;
-
-        //call main again
-        main()
-        }, 150)
+            clearCanvas(game.context, game.canvas)
+            drawFood(game.context, game.snake)
+            game = moveSnake(game) 
+            drawSnake(game)
+            // points over the canvas
+            document.getElementById("points").innerHTML = game.snake.points;
+            //call main again
+            main()
+        }, 150) //GameSpeed
     }
     
 
-    //movements of the snake
-    document.addEventListener("keydown", change_direction);
+    // Movements of the snake from Keyboard
+    document.addEventListener('keydown', (event) => { change_direction(event, game)});
     
-    //starting the app with space
+    // EventListener to start the game from keyboard's space
     document.addEventListener('keypress', e => {
         if(e.code === 'Space'){
             ButtonStartGame()
         }
     })
 
-    //starting game by mouseclick
-    canvas.addEventListener('click', function(evt){
-        var mousePos = getMousePos(canvas, evt)
+    // Starting game by mouseclick
+    game.canvas.addEventListener('click', function(evt){
+        let mousePos = getMousePos(game.canvas, evt)
 
-        if (!runGame && isInside(mousePos,rect)) {
+        if (!game.isRunning && isInside(mousePos,rect)) {
             StartGame()
         }
     }, false)
 
-    mainScreen()
-    console.log(runGame)
-    if (runGame) {
+    mainScreen(game)
+    if (game.isRunning) {
         main()
     }
     //main()
     
+        //aliohjelmoimisen jälkeen ongelmana ruuan generointi,
+        //muuttujat food_x ja food_y ei muutu pääohjelmassa
 
         /* PUUTTUVAT TOIMINNOT:             
         8. benchmarkkaus originaaliin 3310 snakeen
@@ -352,9 +175,23 @@ window.onload = function (){
         16. jaa .js ohjelma useampiin alatiedostoihin
         19. Ennätyslistaan omalla nimellä
         2X. funktionaalisten sääntöjen mukaan
+        32. StartGame omaksi tiedostokseen
+        33. Palauttaako nä funktiot jotain vai miten tuo objekti välillä oikein toimii :D
+
+        30. Ensimmäinen ruoka voi tällä hetkellä olla madon alla,
+            koska generoidaan vain satunnaisesti :o
+            mahd ratkaisu. movesnaken has eaten food trueksi
+            kun ohjelma alkaa (Eli tulisko lisätä objektiin game.snake?)
+        31. Madon liikkumisesta: jos mato ei ole tehnyt aikaisempaa liikettä,
+            se ei ota muistiin toista liikettä (esimerkkitapaus, nopea käännös).
+            Tämän vuoksi voi joskus tuntua ettei mato tottele näppämistöä.
+            ^^Voikohan tuon kehittää toimimaan paremmin?
+                - Liikkeet arrayna jossa maksimissaan kaksi arvoa?
+                - käytännössä jokaisessa liikkeessä poistaisi aina ensimmäisenä tulleen
+                  arvon (FIFO) ja suoraan mentäessä arrayssa ei olisi arvoja 
 
 
-        24. Lataa WSL2
+        
         20. Typescriptiksi
             - typescript compiler (TSC)
                 - tsc watch (devserver) tsc build ()
@@ -386,6 +223,12 @@ window.onload = function (){
             - position relative bottom -4px numeron siirtoon
         17. Ennätyslistan tulostaminen (2.8.2022)
         18. Omien pisteiden lisääminen ennätyslistaan ilman nimeä (2.8.2022)
+        24. Lataa WSL2 (10.8.2022)
+        25. Komponentteja omiksi tiedostoiksi
+        26. Luotu objekti "game" hallitsemaan pelin muuttujia (18.8.2022)
+        27. Muokattu drawSnake erikseen ja poistettu erillinen snakePart funktio(24.8.2022)
+        28. genFood toimii viimein, kirjoitus virhe y ja x :D (24.8.2022)
+        29. changeDirection.js kansiokseen ja muutettu toimimaan näppäimistöstä ja UI:stä (25.8.2022)
         */
     
 }

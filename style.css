@@ -100,10 +100,9 @@ header {
     background-color: rgb(148, 196, 0);
     font-family: nokiafc22;
 }
-#cont-buttons {
+/*#cont-buttons {
 
-    
-}
+}*/
 #c-button{
     width: 40px;
     height: 40px;
